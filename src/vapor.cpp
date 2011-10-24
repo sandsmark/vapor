@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) %{CURRENT_YEAR} by %{AUTHOR} <%{EMAIL}>                            *
+ *   Copyright (C) 2011 by Martin T. Sandsmark <martin.sandsmark@kde.org>  *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,7 +18,6 @@
  ***************************************************************************/
 
 #include "vapor.h"
-#include "vaporview.h"
 #include "settings.h"
 
 #include <QtGui/QDropEvent>
@@ -34,16 +33,17 @@
 
 #include <KLocale>
 
+#include <QTreeView>
+#include <mainwidget.h>
+
 Vapor::Vapor()
-    : KXmlGuiWindow(),
-      m_view(new VaporView(this)),
-      m_printer(0)
+    : KXmlGuiWindow()
 {
     // accept dnd
     setAcceptDrops(true);
 
     // tell the KXmlGuiWindow that this is indeed the main widget
-    setCentralWidget(m_view);
+    setCentralWidget(new MainWidget);
 
     // then, setup our actions
     setupActions();
@@ -65,25 +65,14 @@ Vapor::~Vapor()
 
 void Vapor::setupActions()
 {
-    KStandardAction::openNew(this, SLOT(fileNew()), actionCollection());
     KStandardAction::quit(qApp, SLOT(closeAllWindows()), actionCollection());
 
     KStandardAction::preferences(this, SLOT(optionsPreferences()), actionCollection());
 
     // custom menu and menu item - the slot is in the class VaporView
-    KAction *custom = new KAction(KIcon("colorize"), i18n("Swi&tch Colors"), this);
+    /*KAction *custom = new KAction(KIcon("colorize"), i18n("Swi&tch Colors"), this);
     actionCollection()->addAction( QLatin1String("switch_action"), custom );
-    connect(custom, SIGNAL(triggered(bool)), m_view, SLOT(switchColors()));
-}
-
-void Vapor::fileNew()
-{
-    // this slot is called whenever the File->New menu is selected,
-    // the New shortcut is pressed (usually CTRL+N) or the New toolbar
-    // button is clicked
-
-    // create a new window
-    (new Vapor)->show();
+    connect(custom, SIGNAL(triggered(bool)), m_view, SLOT(switchColors()));*/
 }
 
 void Vapor::optionsPreferences()
@@ -100,7 +89,7 @@ void Vapor::optionsPreferences()
     QWidget *generalSettingsDlg = new QWidget;
     ui_prefs_base.setupUi(generalSettingsDlg);
     dialog->addPage(generalSettingsDlg, i18n("General"), "package_setting");
-    connect(dialog, SIGNAL(settingsChanged(QString)), m_view, SLOT(settingsChanged()));
+    //connect(dialog, SIGNAL(settingsChanged(QString)), m_view, SLOT(settingsChanged()));
     dialog->setAttribute( Qt::WA_DeleteOnClose );
     dialog->show();
 }

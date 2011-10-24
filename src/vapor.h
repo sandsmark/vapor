@@ -25,8 +25,6 @@
 
 #include "ui_prefs_base.h"
 
-class VaporView;
-class QPrinter;
 class KToggleAction;
 class KUrl;
 
@@ -53,7 +51,6 @@ public:
     virtual ~Vapor();
 
 private slots:
-    void fileNew();
     void optionsPreferences();
 
 private:
@@ -61,9 +58,7 @@ private:
 
 private:
     Ui::prefs_base ui_prefs_base ;
-    VaporView *m_view;
 
-    QPrinter   *m_printer;
     KToggleAction *m_toolbarAction;
     KToggleAction *m_statusbarAction;
 };
