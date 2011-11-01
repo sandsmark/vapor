@@ -23,6 +23,7 @@
 #include "playpausebutton.h"
 #include "trackviewdelegate.h"
 #include "blockanalyzer.h"
+#include "collection.h"
 
 #include <math.h>
 
@@ -67,12 +68,6 @@ MainWidget::MainWidget(QWidget *parent)
     m_trackView->setDragDropMode(QAbstractItemView::DragDrop);
     m_trackView->setSortingEnabled(true);
     
-    TrackModel *trackmodel = new TrackModel;
-    LocalScanner scanner("/home/sandsmark/musikk/Celldweller", trackmodel, this);
-    m_trackView->setModel(trackmodel);
-    
-    scanner.rescan();
-
     m_playPauseButton = new PlayPauseButton(this);
 
     m_slider = new Slider(this);

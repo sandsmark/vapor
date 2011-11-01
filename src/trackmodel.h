@@ -22,13 +22,7 @@
 #include <QtCore/QList>
 #include <QtCore/QAbstractItemModel>
 
-class Track {
-public:
-    qint64    duration;
-    QString   title;
-    QString   artist;
-    QString   album;
-};
+class Track;
 
 class TrackModel
     : public QAbstractItemModel

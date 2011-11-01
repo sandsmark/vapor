@@ -34,10 +34,15 @@
 #include <KLocale>
 
 #include <QTreeView>
+#include <QListWidget>
+
 #include <mainwidget.h>
+#include "collection.h"
+#include "localscanner.h"
 
 Vapor::Vapor()
-    : KXmlGuiWindow()
+    : KXmlGuiWindow(),
+    m_collection(new Collection)
 {
     // accept dnd
     setAcceptDrops(true);
@@ -57,6 +62,14 @@ Vapor::Vapor()
     // mainwindow to automatically save settings if changed: window size,
     // toolbar position, icon size, etc.
     setupGUI();
+    
+    m_playlistView = new QListWidget;
+    m_playlistView->addItems(m_collection->playlists());
+    
+    LocalScanner *scanner = new LocalScanner("/home/sandsmark/musikk/Celldweller/", m_collection, this);
+    scanner->rescan();
+    qWarning() << "cuntfuck";
+    
 }
 
 Vapor::~Vapor()

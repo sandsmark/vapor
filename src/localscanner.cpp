@@ -1,5 +1,5 @@
 #include "localscanner.h"
-#include "trackmodel.h"
+#include "collection.h"
 
 #include <QDebug>
 
@@ -7,16 +7,15 @@
 #include <taglib/fileref.h>
 #include <taglib/tag.h>
 
-LocalScanner::LocalScanner(QString path, TrackModel* model, QObject *parent) : QObject(parent),
+LocalScanner::LocalScanner(QString path, Collection* collection, QObject *parent) : QObject(parent),
     m_path(path),
-    m_model(model)
+    m_collection(collection)
 {
     m_nameFilter << "*.mp3";
 }
 
 void LocalScanner::rescan()
 {
-    qWarning() << "lollert";
     scanDir(QDir(m_path));
 }
 
@@ -27,7 +26,8 @@ void LocalScanner::scanDir(QDir dir)
     
     if (dir.count() > 0) {
         Q_FOREACH(QString filename, dir.entryList()) {
-            TagLib::FileRef file(QString(dir.path() + filename).toLocal8Bit());
+            
+            TagLib::FileRef file(QString(dir.path() + "/" + filename).toLocal8Bit());
             
             if (file.isNull() || !file.audioProperties() || !file.tag())
                 continue;
@@ -35,6 +35,7 @@ void LocalScanner::scanDir(QDir dir)
             QString title = fromTString(file.tag()->title());
             QString artist= fromTString(file.tag()->artist());
             QString album = fromTString(file.tag()->album());
+            uint trackNumber = file.tag()->track();
             int duration = file.audioProperties()->length();
             if (title.isEmpty() || artist.isEmpty())
                 continue;
@@ -44,7 +45,8 @@ void LocalScanner::scanDir(QDir dir)
             track->artist = artist;
             track->album = album;
             track->duration = duration;
-            m_model->addTrack(track);
+            track->track = trackNumber;
+            m_collection->addTrack(track);
             qWarning() << title << artist << album << duration;
         }
     }

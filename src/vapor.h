@@ -28,13 +28,18 @@
 class KToggleAction;
 class KUrl;
 
+class QListWidget;
+class QLineEdit;
+
+class Collection;
+
 /**
  * This class serves as the main window for Vapor.  It handles the
- * menus, toolbars and status bars.
+ * menus, toolbars and status bars, as well as the various dock widgets.
  *
  * @short Main window class
- * @author %{AUTHOR} <%{EMAIL}>
- * @version %{VERSION}
+ * @author Martin Sandsmark <martin.sandsmark@kde.org>
+ * @version 0.1
  */
 class Vapor : public KXmlGuiWindow
 {
@@ -61,6 +66,11 @@ private:
 
     KToggleAction *m_toolbarAction;
     KToggleAction *m_statusbarAction;
+    
+    Collection *m_collection;
+    
+    QListWidget *m_playlistView;
+    QLineEdit *m_searchEdit;
 };
 
 #endif // _VAPOR_H_

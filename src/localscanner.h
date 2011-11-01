@@ -4,7 +4,7 @@
 #include <QStringList>
 #include <taglib/audioproperties.h>
 
-class TrackModel;
+class Collection;
 namespace TagLib {
     class String;
 }
@@ -13,7 +13,7 @@ class LocalScanner : QObject
 {
     Q_OBJECT
 public:
-    LocalScanner(QString path, TrackModel* model, QObject* parent=0);
+    LocalScanner(QString path, Collection* model, QObject* parent=0);
     
 public slots:
     void rescan();
@@ -23,7 +23,7 @@ private:
     
     void scanDir(QDir dir);
     QString m_path;
-    TrackModel *m_model;
+    Collection *m_collection;
     QStringList m_nameFilter;
 };
 

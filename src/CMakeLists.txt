@@ -9,9 +9,9 @@ set(vapor_SRCS
    
     playpausebutton.cpp
     slider.cpp
-
-    analyzerbase.cpp
     blockanalyzer.cpp
+    analyzerbase.cpp
+    
     fht.cpp
 
     lyricswidget.cpp
@@ -19,6 +19,7 @@ set(vapor_SRCS
 
     localscanner.cpp
 
+    collection.cpp
     
  )
 
