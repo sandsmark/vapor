@@ -29,9 +29,11 @@ class KToggleAction;
 class KUrl;
 
 class QListWidget;
+class QListWidgetItem;
 class QLineEdit;
 
 class Collection;
+class MainWidget;
 
 /**
  * This class serves as the main window for Vapor.  It handles the
@@ -57,6 +59,8 @@ public:
 
 private slots:
     void optionsPreferences();
+    void playlistsUpdated();
+    void playlistClicked(QListWidgetItem*);
 
 private:
     void setupActions();
@@ -71,6 +75,7 @@ private:
     
     QListWidget *m_playlistView;
     QLineEdit *m_searchEdit;
+    MainWidget *m_mainWidget;
 };
 
 #endif // _VAPOR_H_

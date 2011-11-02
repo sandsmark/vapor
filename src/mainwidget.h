@@ -29,8 +29,6 @@
 #include <QtGui/QItemSelection>
 #include <QtGui/QSortFilterProxyModel>
 
-#include <libspotify/api.h>
-
 class TrackView;
 
 class QLabel;
@@ -71,21 +69,10 @@ public:
         {
         }
 
-        int rowForTrack(Track *track)
-        {
-            for (int i = 0; i < proxyModel->rowCount(); ++i) {
-                Track *const currTrack = proxyModel->index(i, 0).data(TrackModel::SpotifyNativeTrackRole).value<Track*>();
-                if (currTrack == track) {
-                    return i;
-                }
-            }
-            return -1;
-        }
-
         QSortFilterProxyModel *proxyModel;
         TrackModel            *trackModel;
-        Track              *currentTrack;
-        bool                   needsToBeFilled;
+        Track               *currentTrack;
+        bool              needsToBeFilled;
     };
 
     MainWidget(QWidget *parent = 0);
@@ -96,10 +83,10 @@ public:
 
     void clearFilter();
 
-    Collection &collection(sp_playlist *playlist);
-    Collection &collection(sp_search *search);
+    Collection &collection(QList <Track*> tracks);
     Collection *currentPlayingCollection() const;
     void setCurrentPlayingCollection(Collection &collection);
+    void setCurrentPlayingList(QList<Track*> tracks) { setCurrentPlayingCollection(collection(tracks)); }
     TrackView *trackView() const;
 
     void setState(State state);
@@ -140,8 +127,6 @@ private:
     BlockAnalyzer                   *m_analyzer;
     int                              m_totalTrackTime;
 
-    QHash<sp_playlist*, Collection> m_trackModelPlaylistCache;
-    QHash<sp_search*, Collection>   m_trackModelSearchCache;
     Collection                     *m_currentCollection;
     Collection                     *m_currentPlayingCollection;
 };

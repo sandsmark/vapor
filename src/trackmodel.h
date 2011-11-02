@@ -36,7 +36,6 @@ public:
     };
 
     enum OwnRoles {
-        SpotifyNativeTrackRole = Qt::UserRole,
         SortRole
     };
 

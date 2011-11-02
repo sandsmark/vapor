@@ -35,6 +35,7 @@
 
 #include <QTreeView>
 #include <QListWidget>
+#include <QDockWidget>
 
 #include <mainwidget.h>
 #include "collection.h"
@@ -42,13 +43,14 @@
 
 Vapor::Vapor()
     : KXmlGuiWindow(),
-    m_collection(new Collection)
+    m_collection(new Collection(this)),
+    m_mainWidget(new MainWidget)
 {
     // accept dnd
     setAcceptDrops(true);
 
     // tell the KXmlGuiWindow that this is indeed the main widget
-    setCentralWidget(new MainWidget);
+    setCentralWidget(m_mainWidget);
 
     // then, setup our actions
     setupActions();
@@ -63,13 +65,22 @@ Vapor::Vapor()
     // toolbar position, icon size, etc.
     setupGUI();
     
-    m_playlistView = new QListWidget;
-    m_playlistView->addItems(m_collection->playlists());
     
-    LocalScanner *scanner = new LocalScanner("/home/sandsmark/musikk/Celldweller/", m_collection, this);
+    connect(m_collection, SIGNAL(playlistsUpdated()), this, SLOT(playlistsUpdated()));
+    
+    LocalScanner *scanner = new LocalScanner("/home/sandsmark/musikk/Celldweller/Tragedy", m_collection, this);
     scanner->rescan();
-    qWarning() << "cuntfuck";
     
+    // Set up playlist list widget
+    {
+        m_playlistView = new QListWidget;
+        QDockWidget *playlistDock = new QDockWidget(i18n("Playlists"), this);
+        playlistDock->setObjectName("playlists");
+        playlistDock->setWidget(m_playlistView);
+        addDockWidget(Qt::LeftDockWidgetArea, playlistDock);
+        connect(m_playlistView, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(playlistClicked(QListWidgetItem*)));
+    }
+        
 }
 
 Vapor::~Vapor()
@@ -106,5 +117,16 @@ void Vapor::optionsPreferences()
     dialog->setAttribute( Qt::WA_DeleteOnClose );
     dialog->show();
 }
+
+void Vapor::playlistsUpdated()
+{
+    m_playlistView->addItems(m_collection->playlists());
+}
+
+void Vapor::playlistClicked(QListWidgetItem* item)
+{
+    m_mainWidget->setCurrentPlayingCollection(m_collection->tracksForPlaylist(item->text()));
+}
+
 
 #include "vapor.moc"

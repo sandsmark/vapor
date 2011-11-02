@@ -1,9 +1,38 @@
 #include "collection.h"
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QRegExp>
+#include <QDebug>
+#include <QUrl>
 
-Collection::Collection()
+Collection::Collection(QObject *parent) : QObject(parent)
 {
-
+    QNetworkAccessManager *accessManager = new QNetworkAccessManager(this);
+    connect(accessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(gotPlaylists(QNetworkReply*)));
+    accessManager->get(QNetworkRequest(QUrl("http://music:hahafuckyou@music.mts.ms/cgi-bin/get-playlists.pl")));
 }
+
+void Collection::gotPlaylists(QNetworkReply* reply)
+{
+    QString playlistsList = reply->readAll();
+    QRegExp playlistMatcher("\\[(\\d+),\"(\\w+)\"\\]");
+    
+    int pos = 0;
+    Playlist *playlist;
+    while ((pos = playlistMatcher.indexIn(playlistsList, pos)) != -1) {
+        playlist = new Playlist;
+        playlist->id = playlistMatcher.cap(1).toInt();
+        playlist->name = playlistMatcher.cap(2);
+        m_playlists.append(playlist);
+        pos += playlistMatcher.matchedLength();
+    }
+    
+    emit playlistsUpdated();
+    
+    reply->manager()->deleteLater();
+    reply->deleteLater();
+}
+
 
 void Collection::addTrack(Track* track)
 {
@@ -78,7 +107,7 @@ const QList< Track* > Collection::tracksForPlaylist(QString playlistName)
     return QList<Track*>();
 }
 
-const bool Track::operator<(const Track& other)
+bool Track::operator<(const Track& other)
 {
     if (artist != other.artist) {
         return artist < other.artist;

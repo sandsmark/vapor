@@ -1,6 +1,7 @@
 #ifndef COLLECTION_H
 #define COLLECTION_H
 #include <qstringlist.h>
+#include <QObject>
 
 struct Track {
     qint64    duration;
@@ -10,19 +11,24 @@ struct Track {
     bool      local;
     QString   url;
     int       track;
-    const bool operator<(const Track &other);
+    bool operator<(const Track &other);
+    int id;
 };
 
 
+class QNetworkReply;
 
 struct Playlist {
     QString name;
     QList<Track*> tracks;
+    int id;
 };
 
-class Collection {
+class Collection : public QObject {
+    Q_OBJECT
+    
 public:
-    Collection();
+    Collection(QObject *parent);
     const QStringList albums();
     const QStringList artists();
     const QStringList playlists();
@@ -33,6 +39,12 @@ public:
     const QList<Track*> tracksForPlaylist(QString playlist);
     
     void addTrack(Track *track);
+
+signals:
+    void playlistsUpdated();
+    
+private slots:
+    void gotPlaylists(QNetworkReply*);
     
 private:
     QList<Track*> m_tracks;
